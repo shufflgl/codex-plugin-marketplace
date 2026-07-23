@@ -1,55 +1,63 @@
 # My Codex Marketplace
 
-一个可通过 Git 分发的 Codex Plugin Marketplace。市场目录位于
-[`.agents/plugins/marketplace.json`](.agents/plugins/marketplace.json)，插件包位于
-[`plugins/`](plugins/)；每个插件都有必需的 `.codex-plugin/plugin.json` 清单。
+A Codex Plugin Marketplace that can be distributed through Git. The marketplace
+catalog is located at [`.agents/plugins/marketplace.json`](.agents/plugins/marketplace.json),
+and plugin packages are located in [`plugins/`](plugins/). Every plugin includes
+the required `.codex-plugin/plugin.json` manifest.
 
-## 本地验证
+## Validate Locally
 
 ```sh
 python3 scripts/validate_marketplace.py
 ```
 
-使用本地目录临时添加市场（会写入你的 Codex 运行时配置）：
+Temporarily add the marketplace from the local directory (this writes to your
+Codex runtime configuration):
 
 ```sh
 codex plugin marketplace add ./
 codex plugin marketplace list
 ```
 
-随后在 Codex CLI 输入 `/plugins`，从 **My Codex Marketplace** 安装插件并开启一个新会话。
-本地测试完成后可移除它：
+Then enter `/plugins` in Codex CLI, install a plugin from **My Codex Marketplace**,
+and start a new session. Remove the local marketplace after testing:
 
 ```sh
 codex plugin marketplace remove my-codex-marketplace
 ```
 
-## 发布为 Git Marketplace
+## Publish as a Git Marketplace
 
-1. 将本目录初始化并推送到 GitHub、GitLab 或可访问的 Git 远程仓库。
-2. 用户通过以下任一方式添加市场：
+1. Initialize this directory and push it to GitHub, GitLab, or another accessible
+   Git remote.
+2. Users can add the marketplace in either of these ways:
 
    ```sh
    codex plugin marketplace add OWNER/REPOSITORY
-   # 或固定到一个分支 / tag
+   # Or pin to a branch or tag.
    codex plugin marketplace add OWNER/REPOSITORY --ref main
    ```
 
-   对任意 Git 地址也可使用：
+   Any Git URL can also be used:
 
    ```sh
    codex plugin marketplace add https://github.com/OWNER/REPOSITORY.git --ref main
    ```
 
-3. 用户执行 `codex plugin marketplace upgrade my-codex-marketplace` 获取后续市场更新。
+3. Users can run `codex plugin marketplace upgrade my-codex-marketplace` to get
+   later marketplace updates.
 
-> 对生产使用，建议将 `--ref` 固定为经过审查的 tag 或 commit SHA，而不是持续跟踪分支。
+> For production use, pin `--ref` to a reviewed tag or commit SHA rather than
+> continuously tracking a branch.
 
-## 新增本仓库插件
+## Add a Plugin to This Repository
 
-1. 创建 `plugins/<plugin-name>/.codex-plugin/plugin.json`。`name` 使用稳定的小写 kebab-case。
-2. 如包含 Skill，在 `plugins/<plugin-name>/skills/<skill-name>/SKILL.md` 中创建它；清单的 `skills` 使用 `"./skills/"`。
-3. 在 `.agents/plugins/marketplace.json` 的 `plugins` 数组添加条目，使用：
+1. Create `plugins/<plugin-name>/.codex-plugin/plugin.json`. Use a stable,
+   lowercase kebab-case value for `name`.
+2. For a plugin that includes a skill, create
+   `plugins/<plugin-name>/skills/<skill-name>/SKILL.md`; set the manifest's
+   `skills` field to `"./skills/"`.
+3. Add an entry to the `plugins` array in `.agents/plugins/marketplace.json`:
 
    ```json
    {
@@ -60,11 +68,14 @@ codex plugin marketplace remove my-codex-marketplace
    }
    ```
 
-4. 运行验证脚本，再用 `/plugins` 手动安装测试。不要将凭据、令牌或其他秘密放进插件、清单或市场目录。
+4. Run the validation script, then manually install and test the plugin through
+   `/plugins`. Do not place credentials, tokens, or other secrets in plugins,
+   manifests, or the marketplace catalog.
 
-## 引用外部 Git 插件
+## Reference an External Git Plugin
 
-市场也能收录独立维护的 Git 插件。插件在一个仓库子目录时，条目使用 `git-subdir`：
+The marketplace can also catalog independently maintained Git plugins. When a
+plugin lives in a repository subdirectory, use `git-subdir` for the entry:
 
 ```json
 {
@@ -80,20 +91,27 @@ codex plugin marketplace remove my-codex-marketplace
 }
 ```
 
-对外部依赖请优先固定可信 tag 或 commit SHA，并在发布前审查其 manifest、Skill、MCP 配置和 hooks。
+For external dependencies, prefer a trusted pinned tag or commit SHA. Review the
+plugin manifest, skills, MCP configuration, and hooks before publishing an entry.
 
-## 当前内容
+## Current Contents
 
-- **project-onboarding**：在改动陌生代码库前，按规则、架构、测试与验证顺序进行阅读和规划。它仅提供 Skill，不包含 MCP、hooks、连接器或密钥。
+- **project-onboarding**: A structured skill for reading and planning changes in
+  an unfamiliar codebase. It contains only a skill; it does not include MCP
+  servers, hooks, connectors, or secrets.
 
-## 维护原则
+## Maintenance Principles
 
-- 每次修改市场或插件后运行 `python3 scripts/validate_marketplace.py`。
-- 对有破坏性行为的更新提升插件版本并在发布说明中记录迁移步骤。
-- 安装前审查来自第三方的 hooks、MCP server、连接器和脚本；这些组件可能具有读取、写入或网络访问能力。
-- 一次只更新经过验证的市场条目；当 Git 源无法解析时，Codex 会跳过该条目而不会使整个市场失效。
+- Run `python3 scripts/validate_marketplace.py` after every marketplace or plugin
+  change.
+- Increment the plugin version for breaking changes and document migration steps
+  in release notes.
+- Review third-party hooks, MCP servers, connectors, and scripts before
+  installation; these components may have read, write, or network access.
+- Update only verified marketplace entries at a time. If a Git source cannot be
+  resolved, Codex skips that entry without invalidating the entire marketplace.
 
-## 官方文档
+## Official Documentation
 
 - [Build plugins](https://learn.chatgpt.com/docs/build-plugins)
 - [Plugins](https://learn.chatgpt.com/docs/plugins)
