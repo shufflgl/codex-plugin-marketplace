@@ -11,7 +11,7 @@ await cp(clientUrl, outputUrl, { recursive: true });
 workerUrl.searchParams.set("export", `${Date.now()}`);
 const { default: worker } = await import(workerUrl.href);
 const response = await worker.fetch(
-  new Request("https://codex-plugin-marketplace.shufflgl.chatgpt.site/", { headers: { accept: "text/html" } }),
+  new Request("https://codex-plugins.lglgl.me/", { headers: { accept: "text/html" } }),
   { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
   { waitUntil() {}, passThroughOnException() {} },
 );

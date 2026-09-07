@@ -8,7 +8,7 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 export const metadata: Metadata = {
   title: "Codex Plugin Marketplace",
   description: "Browse and install repository-maintained Codex plugins.",
-  metadataBase: new URL("https://codex-plugin-marketplace.shufflgl.chatgpt.site"),
+  metadataBase: new URL("https://codex-plugins.lglgl.me"),
   icons: { icon: "/marketplace-logo.png", shortcut: "/marketplace-logo.png" },
 };
 

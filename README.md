@@ -8,7 +8,7 @@ Allowed catalog categories are defined in [`categories.json`](categories.json).
 
 The searchable web catalog is generated from those same repository sources by
 [`plugin-marketplace-site/`](plugin-marketplace-site/) and published independently
-at <https://codex-plugin-marketplace.shufflgl.chatgpt.site>.
+on Cloudflare Pages at <https://codex-plugins.lglgl.me>.
 
 ## Validate Locally
 

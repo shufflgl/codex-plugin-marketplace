@@ -20,3 +20,8 @@ bun run build:pages
 ```
 
 The static deployment output is written to `out/` and is excluded from source control.
+
+## Production
+
+The site is deployed to the Cloudflare Pages project `shufflgl-codex-plugins`
+and served at <https://codex-plugins.lglgl.me>.
