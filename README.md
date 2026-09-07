@@ -99,6 +99,9 @@ plugin manifest, skills, MCP configuration, and hooks before publishing an entry
 - **project-onboarding**: A structured skill for reading and planning changes in
   an unfamiliar codebase. It contains only a skill; it does not include MCP
   servers, hooks, connectors, or secrets.
+- **photo-art-studio**: Creates photo-integrated or pure artwork from reference
+  images or text briefs, with selectable visual styles and output ratios. It
+  includes a purpose-built transparent logo and no MCP servers or credentials.
 
 ## Maintenance Principles
 
