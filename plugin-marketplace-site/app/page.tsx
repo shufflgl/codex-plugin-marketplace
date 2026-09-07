@@ -39,7 +39,7 @@ export default function Home() {
     <main>
       <header className="site-header">
         <Link className="brand" href="/" aria-label="Codex Plugin Marketplace home">
-          <Image src="/marketplace-logo.png" alt="" width={38} height={38} priority />
+          <Image src="/marketplace-logo.png" alt="" width={38} height={38} priority unoptimized />
           <span>Plugin Marketplace</span>
         </Link>
         <a className="github-link" href={snapshot.repository.url} target="_blank" rel="noreferrer" aria-label="Open GitHub repository">
@@ -77,7 +77,7 @@ export default function Home() {
           {visible.map((plugin) => (
             <article className="plugin-card" key={plugin.name}>
               <div className="card-topline">
-                {plugin.logoUrl ? <Image className="plugin-logo" src={plugin.logoUrl} alt="" width={64} height={64} /> : <div className="plugin-logo fallback" aria-hidden="true" />}
+                {plugin.logoUrl ? <Image className="plugin-logo" src={plugin.logoUrl} alt="" width={64} height={64} unoptimized /> : <div className="plugin-logo fallback" aria-hidden="true" />}
                 <div className="card-meta"><span>{plugin.category}</span><span>v{plugin.version}</span></div>
               </div>
               <h3>{plugin.displayName}</h3>

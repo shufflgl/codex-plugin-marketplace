@@ -9,7 +9,14 @@ export const metadata: Metadata = {
   title: "Codex Plugin Marketplace",
   description: "Browse and install repository-maintained Codex plugins.",
   metadataBase: new URL("https://codex-plugins.lglgl.me"),
-  icons: { icon: "/marketplace-logo.png", shortcut: "/marketplace-logo.png" },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "64x64" },
+      { url: "/favicon.png", type: "image/png", sizes: "64x64" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
