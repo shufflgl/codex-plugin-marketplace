@@ -17,6 +17,6 @@ test("generated catalog is public and includes every plugin", async () => {
   const raw = await readFile(new URL("../.generated/catalog.json", import.meta.url), "utf8");
   assert.doesNotMatch(raw, /\/(?:Users|home|private|Volumes)\//);
   const catalog = JSON.parse(raw);
-  assert.ok(catalog.plugins.length >= 2);
+  assert.ok(catalog.plugins.length >= 1);
   assert.ok(catalog.plugins.every((plugin) => plugin.sourceUrl.startsWith("https://")));
 });

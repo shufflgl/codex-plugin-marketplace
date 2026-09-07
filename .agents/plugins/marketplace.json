@@ -5,18 +5,6 @@
   },
   "plugins": [
     {
-      "name": "project-onboarding",
-      "source": {
-        "source": "local",
-        "path": "./plugins/project-onboarding"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Productivity"
-    },
-    {
       "name": "photo-art-studio",
       "source": {
         "source": "local",

@@ -18,7 +18,6 @@ test("server renders the repository-backed plugin catalog", async () => {
   const html = await response.text();
   assert.match(html, /Codex Plugin Marketplace/);
   assert.match(html, /Photo Art Studio/);
-  assert.match(html, /Project Onboarding/);
   assert.match(html, /Search plugins/);
   assert.match(html, /Install/);
   assert.match(html, /shufflgl\/codex-plugin-marketplace/);
