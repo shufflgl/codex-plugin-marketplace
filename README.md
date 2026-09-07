@@ -4,11 +4,27 @@ A Codex Plugin Marketplace that can be distributed through Git. The marketplace
 catalog is located at [`.agents/plugins/marketplace.json`](.agents/plugins/marketplace.json),
 and plugin packages are located in [`plugins/`](plugins/). Every plugin includes
 the required `.codex-plugin/plugin.json` manifest.
+Allowed catalog categories are defined in [`categories.json`](categories.json).
+
+The searchable web catalog is generated from those same repository sources by
+[`plugin-marketplace-site/`](plugin-marketplace-site/) and published independently
+at <https://codex-plugin-marketplace.shufflgl.chatgpt.site>.
 
 ## Validate Locally
 
 ```sh
 python3 scripts/validate_marketplace.py
+python3 -m unittest discover -s tests -p 'test_*.py'
+```
+
+Validate and export the website:
+
+```sh
+cd plugin-marketplace-site
+bun install
+bun run lint
+bun run test
+bun run build:pages
 ```
 
 Temporarily add the marketplace from the local directory (this writes to your
@@ -113,6 +129,12 @@ plugin manifest, skills, MCP configuration, and hooks before publishing an entry
   installation; these components may have read, write, or network access.
 - Update only verified marketplace entries at a time. If a Git source cannot be
   resolved, Codex skips that entry without invalidating the entire marketplace.
+- Treat the marketplace file and plugin manifests as the only catalog sources;
+  never hand-maintain plugin cards in the website.
+- Keep each local plugin directory, marketplace entry, manifest name, referenced
+  asset, and website catalog record synchronized.
+- Require the repository validation and website build workflow to pass before
+  publishing changes to `main`.
 
 ## Official Documentation
 

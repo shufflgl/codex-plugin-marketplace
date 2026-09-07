@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: validate-marketplace
+        name: Marketplace consistency
+        entry: python3 scripts/validate_marketplace.py
+        language: system
+        pass_filenames: false
+        files: ^(.agents/plugins/marketplace\.json|categories\.json|plugins/|scripts/validate_marketplace\.py)$

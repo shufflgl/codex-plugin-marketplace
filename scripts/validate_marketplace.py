@@ -11,9 +11,10 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / ".agents/plugins/marketplace.json"
+CATEGORIES = ROOT / "categories.json"
 NAME = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 INSTALLATION = {"AVAILABLE", "INSTALLED_BY_DEFAULT", "NOT_AVAILABLE"}
-AUTHENTICATION = {"ON_INSTALL", "ON_FIRST_USE"}
+AUTHENTICATION = {"ON_INSTALL", "ON_USE"}
 
 
 def fail(message: str) -> None:
@@ -41,6 +42,7 @@ def require_string(value: Any, field: str, context: str) -> str:
 
 def main() -> None:
     catalog = load_json(CATALOG)
+    categories = load_json(CATEGORIES)
     catalog_name = require_string(catalog.get("name"), "name", "marketplace")
     if not NAME.fullmatch(catalog_name):
         fail("marketplace.name must use kebab-case")
@@ -55,6 +57,7 @@ def main() -> None:
         fail("marketplace.plugins must be a non-empty array")
 
     seen: set[str] = set()
+    local_plugin_directories: set[str] = set()
     for index, entry in enumerate(plugins):
         context = f"marketplace.plugins[{index}]"
         if not isinstance(entry, dict):
@@ -79,7 +82,9 @@ def main() -> None:
             fail(f"{context}.policy.installation must be one of {sorted(INSTALLATION)}")
         if authentication not in AUTHENTICATION:
             fail(f"{context}.policy.authentication must be one of {sorted(AUTHENTICATION)}")
-        require_string(entry.get("category"), "category", context)
+        category = require_string(entry.get("category"), "category", context)
+        if category not in categories:
+            fail(f"{context}.category is not registered in categories.json")
 
         if source_type == "local":
             source_path = require_string(source.get("path"), "path", f"{context}.source")
@@ -92,16 +97,40 @@ def main() -> None:
                 fail(f"{context}.source.path must remain inside the repository")
             manifest_path = plugin_root / ".codex-plugin/plugin.json"
             manifest = load_json(manifest_path)
+            local_plugin_directories.add(plugin_root.name)
             manifest_name = require_string(manifest.get("name"), "name", str(manifest_path.relative_to(ROOT)))
             if manifest_name != name:
                 fail(f"{context}.name ({name}) does not match manifest name ({manifest_name})")
             require_string(manifest.get("version"), "version", str(manifest_path.relative_to(ROOT)))
             require_string(manifest.get("description"), "description", str(manifest_path.relative_to(ROOT)))
+            interface = manifest.get("interface")
+            if not isinstance(interface, dict):
+                fail(f"{manifest_path.relative_to(ROOT)}.interface must be an object")
+            for field in ("displayName", "shortDescription", "longDescription", "developerName", "category"):
+                require_string(interface.get(field), field, f"{manifest_path.relative_to(ROOT)}.interface")
+            for field in ("composerIcon", "logo", "logoDark"):
+                asset = interface.get(field)
+                if asset is None:
+                    continue
+                asset_path = require_string(asset, field, f"{manifest_path.relative_to(ROOT)}.interface")
+                if not asset_path.startswith("./") or not (plugin_root / asset_path).is_file():
+                    fail(f"{manifest_path.relative_to(ROOT)}.interface.{field} must reference an existing plugin file")
         elif source_type in {"url", "git-subdir", "npm"}:
             # Remote entries are intentionally validated only structurally here.
             print(f"INFO: remote source validation is deferred for {name} ({source_type})")
         else:
             fail(f"{context}.source.source is unsupported by this validator: {source_type}")
+
+    on_disk = {
+        path.name
+        for path in (ROOT / "plugins").iterdir()
+        if path.is_dir() and (path / ".codex-plugin" / "plugin.json").is_file()
+    }
+    if on_disk != local_plugin_directories:
+        fail(
+            "local marketplace entries and plugin directories differ: "
+            f"catalog={sorted(local_plugin_directories)}, disk={sorted(on_disk)}"
+        )
 
     print(f"OK: {catalog_name} — validated {len(plugins)} plugin(s)")
 
