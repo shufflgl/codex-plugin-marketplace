@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the local Codex marketplace catalog without external dependencies."""
+"""Validate the local catalog, manifests, and required packaged plugin icons."""
 
 from __future__ import annotations
 
@@ -108,7 +108,13 @@ def main() -> None:
                 fail(f"{manifest_path.relative_to(ROOT)}.interface must be an object")
             for field in ("displayName", "shortDescription", "longDescription", "developerName", "category"):
                 require_string(interface.get(field), field, f"{manifest_path.relative_to(ROOT)}.interface")
-            for field in ("composerIcon", "logo", "logoDark"):
+            for field in ("composerIcon", "logo"):
+                asset = require_string(
+                    interface.get(field), field, f"{manifest_path.relative_to(ROOT)}.interface"
+                )
+                if not asset.startswith("./") or not (plugin_root / asset).is_file():
+                    fail(f"{manifest_path.relative_to(ROOT)}.interface.{field} must reference an existing packaged plugin icon")
+            for field in ("logoDark",):
                 asset = interface.get(field)
                 if asset is None:
                     continue
