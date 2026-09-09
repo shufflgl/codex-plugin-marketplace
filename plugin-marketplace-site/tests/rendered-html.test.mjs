@@ -17,9 +17,7 @@ test("server renders the repository-backed plugin catalog", async () => {
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /Codex Plugin Marketplace/);
-  assert.match(html, /Photo Art Studio/);
   assert.match(html, /src="\/marketplace-logo\.png"/);
-  assert.match(html, /src="\/plugin-logos\/photo-art-studio\.png"/);
   assert.match(html, /href="\/favicon\.ico"/);
   assert.doesNotMatch(html, /\/_next\/image/);
   assert.match(html, /Search plugins/);

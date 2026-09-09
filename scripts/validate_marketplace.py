@@ -53,8 +53,8 @@ def main() -> None:
     require_string(interface.get("displayName"), "displayName", "marketplace.interface")
 
     plugins = catalog.get("plugins")
-    if not isinstance(plugins, list) or not plugins:
-        fail("marketplace.plugins must be a non-empty array")
+    if not isinstance(plugins, list):
+        fail("marketplace.plugins must be an array")
 
     seen: set[str] = set()
     local_plugin_directories: set[str] = set()
@@ -127,11 +127,12 @@ def main() -> None:
         else:
             fail(f"{context}.source.source is unsupported by this validator: {source_type}")
 
+    plugins_directory = ROOT / "plugins"
     on_disk = {
         path.name
-        for path in (ROOT / "plugins").iterdir()
+        for path in plugins_directory.iterdir()
         if path.is_dir() and (path / ".codex-plugin" / "plugin.json").is_file()
-    }
+    } if plugins_directory.is_dir() else set()
     if on_disk != local_plugin_directories:
         fail(
             "local marketplace entries and plugin directories differ: "
